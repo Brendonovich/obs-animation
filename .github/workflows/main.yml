@@ -550,7 +550,7 @@ jobs:
           REQUEST_UUID=$(echo $UPLOAD_RESULT | awk -F ' = ' '/RequestUUID/ {print $2}')
 
           # Pieces of code borrowed from rednoah/notarized-app
-          while sleep 30 && date; do
+          while sleep 15 && date; do
             CHECK_RESULT=$(xcrun altool \
               --notarization-info "$REQUEST_UUID" \
               --username "${{ secrets.AC_USERNAME }}" \

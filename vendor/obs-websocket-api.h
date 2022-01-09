@@ -87,7 +87,7 @@ static inline bool obs_websocket_vendor_register_request(obs_websocket_vendor ve
 {
 	calldata_t cd = {0};
 
-	struct obs_websocket_request_callback cb = {};
+	struct obs_websocket_request_callback cb;
 	cb.callback = request_callback;
 	cb.priv_data = priv_data;
 

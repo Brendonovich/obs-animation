@@ -47,22 +47,6 @@ void keyframe_list_push_back(keyframe_list_t *list, double_keyframe_t *keyframe)
     }
 }
 
-void keyframe_list_append_tests(keyframe_list_t *list) {
-    double_keyframe_t *keyframe_1 = bzalloc(sizeof(double_keyframe_t));
-    keyframe_1->duration = 1000;
-    keyframe_1->from = 0.0;
-    keyframe_1->to = 1920.0;
-
-    keyframe_list_push_back(list, keyframe_1);
-
-    double_keyframe_t *keyframe_2 = bzalloc(sizeof(double_keyframe_t));
-    keyframe_2->duration = 1000;
-    keyframe_2->from = 1920.0;
-    keyframe_2->to = 0;
-
-    keyframe_list_push_back(list, keyframe_2);
-}
-
 // Animation
 
 void animation_target_free(animation_target_t *target) {
@@ -89,10 +73,13 @@ filter_info_t *filter_info_create() {
 
 static const char *animation_filter_get_name(void *type_data) {
     UNUSED_PARAMETER(type_data);
+
     return obs_module_text("Animation");
 }
 
 static void *animation_create(obs_data_t *settings, obs_source_t *filter) {
+    UNUSED_PARAMETER(settings);
+
     filter_info_t *info = filter_info_create();
     info->filter = filter;
 
@@ -102,6 +89,8 @@ static void *animation_create(obs_data_t *settings, obs_source_t *filter) {
 }
 
 static obs_properties_t *animation_properties(void *data) {
+    UNUSED_PARAMETER(data);
+
     obs_properties_t *properties = obs_properties_create();
     obs_properties_add_button(properties, "info", obs_module_text("WebSocketControlInfo"), NULL);
     return properties;

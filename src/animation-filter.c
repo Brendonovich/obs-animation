@@ -2,10 +2,7 @@
 #include <obs-frontend-api.h>
 #include <obs-module.h>
 #include <stdio.h>
-//#include <util/dstr.h>
 #include <util/darray.h>
-#include <unistd.h>
-#include <sys/time.h>
 
 // Keyframes
 

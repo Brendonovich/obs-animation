@@ -18,7 +18,7 @@ AnimationTarget::AnimationTarget(obs_data_t *data)
         obs_sceneitem_t *item = obs_scene_find_sceneitem_by_id(scene, scene_item_id);
         obs_source_release(scene_source);
 
-        obs_target = {.sceneitem = {.val = item}};
+        obs_target.sceneitem = item;
         break;
     }
     case SourceSettings:
@@ -28,7 +28,7 @@ AnimationTarget::AnimationTarget(obs_data_t *data)
         obs_source_t *source = obs_get_source_by_name(source_name);
         obs_source_release(source);
 
-        obs_target = {.source = {.val = source}};
+        obs_target.source = source;
         break;
     }
     case FilterSettings:
@@ -41,7 +41,7 @@ AnimationTarget::AnimationTarget(obs_data_t *data)
         obs_source_release(source);
         obs_source_release(filter);
 
-        obs_target = {.filter = {.val = filter}};
+        obs_target.filter = filter;
         break;
     }
     }

@@ -10,6 +10,7 @@ struct OBSSource
     obs_source_t *val;
 
     inline operator obs_source_t *() const { return val; }
+    OBSSource operator=(obs_source_t *ptr) { val = ptr; }
 
     bool propertyType(const char *property, AnimationPropertyType *output)
     {

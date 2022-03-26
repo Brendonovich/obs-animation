@@ -32,10 +32,10 @@ jobs:
     steps:
       - name: 'Add msbuild to PATH'
         uses: microsoft/setup-msbuild@v1.0.2
-      - name: 'Checkout obs-animation-filter'
+      - name: 'Checkout obs-animation'
         uses: actions/checkout@v2
         with:
-          path: ${{ github.workspace }}/obs-animation-filter
+          path: ${{ github.workspace }}/obs-animation
           submodules: 'recursive'
       - name: 'Checkout OBS-Studio'
         uses: actions/checkout@v2
@@ -56,9 +56,9 @@ jobs:
         run: |
           git checkout ${{ env.OBS_GIT_TAG }}
           git submodule update
-      - name: 'Get obs-animation-filter Git Info'
+      - name: 'Get obs-animation Git Info'
         shell: bash
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           git fetch --prune --unshallow
           GIT_HASH=$(git rev-parse --short HEAD)
@@ -148,30 +148,30 @@ jobs:
         run: |
           msbuild /m /p:Configuration=RelWithDebInfo .\build64\libobs\libobs.vcxproj
           msbuild /m /p:Configuration=RelWithDebInfo .\build64\UI\obs-frontend-api\obs-frontend-api.vcxproj
-      - name: 'Configure obs-animation-filter 32-bit'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Configure obs-animation 32-bit'
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           mkdir .\build32
           cd .\build32
           cmake -G "${{ env.CMAKE_GENERATOR }}" -A Win32 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2019" -DLibObs_DIR="${{ github.workspace }}\obs-studio\build32\libobs" -DLIBOBS_INCLUDE_DIR="${{ github.workspace }}\obs-studio\libobs" -DLIBOBS_LIB="${{ github.workspace }}\obs-studio\build32\libobs\RelWithDebInfo\obs.lib" -DOBS_FRONTEND_LIB="${{ github.workspace }}\obs-studio\build32\UI\obs-frontend-api\RelWithDebInfo\obs-frontend-api.lib" ..
-      - name: 'Configure obs-animation-filter 64-bit'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Configure obs-animation 64-bit'
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           mkdir .\build64
           cd .\build64
           cmake -G "${{ env.CMAKE_GENERATOR }}" -A x64 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2019_64" -DLibObs_DIR="${{ github.workspace }}\obs-studio\build64\libobs" -DLIBOBS_INCLUDE_DIR="${{ github.workspace }}\obs-studio\libobs" -DLIBOBS_LIB="${{ github.workspace }}\obs-studio\build64\libobs\RelWithDebInfo\obs.lib" -DOBS_FRONTEND_LIB="${{ github.workspace }}\obs-studio\build64\UI\obs-frontend-api\RelWithDebInfo\obs-frontend-api.lib" ..
-      - name: 'Build obs-animation-filter 32-bit'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
-        run: msbuild /m /p:Configuration=RelWithDebInfo .\build32\obs-animation-filter.sln
-      - name: 'Build obs-animation-filter 64-bit'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
-        run: msbuild /m /p:Configuration=RelWithDebInfo .\build64\obs-animation-filter.sln
+      - name: 'Build obs-animation 32-bit'
+        working-directory: ${{ github.workspace }}/obs-animation
+        run: msbuild /m /p:Configuration=RelWithDebInfo .\build32\obs-animation.sln
+      - name: 'Build obs-animation 64-bit'
+        working-directory: ${{ github.workspace }}/obs-animation
+        run: msbuild /m /p:Configuration=RelWithDebInfo .\build64\obs-animation.sln
       - name: 'Set PR Artifact Filename'
         shell: bash
         run: |
-          echo "WIN_FILENAME=obs-animation-filter-${{ env.PACKAGE_VERSION }}-Windows" >> $GITHUB_ENV
-      - name: 'Package obs-animation-filter'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+          echo "WIN_FILENAME=obs-animation-${{ env.PACKAGE_VERSION }}-Windows" >> $GITHUB_ENV
+      - name: 'Package obs-animation'
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           mkdir package
           cd package
@@ -181,23 +181,23 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: 'obs-animation-filter-${{ env.PACKAGE_VERSION }}-Windows'
-          path: ${{ github.workspace }}/obs-animation-filter/package/*.zip
+          name: 'obs-animation-${{ env.PACKAGE_VERSION }}-Windows'
+          path: ${{ github.workspace }}/obs-animation/package/*.zip
       - name: 'Publish ${{ env.WIN_FILENAME }}-Installer.exe'
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: 'obs-animation-filter-${{ env.PACKAGE_VERSION }}-Windows-Installer'
-          path: ${{ github.workspace }}/obs-animation-filter/package/*.exe
+          name: 'obs-animation-${{ env.PACKAGE_VERSION }}-Windows-Installer'
+          path: ${{ github.workspace }}/obs-animation/package/*.exe
   ubuntu64:
     name: 'Linux/Ubuntu 64-bit'
     runs-on: [ubuntu-latest]
     if: contains(github.event.head_commit.message, '[skip ci]') != true
     steps:
-      - name: 'Checkout obs-animation-filter'
+      - name: 'Checkout obs-animation'
         uses: actions/checkout@v2
         with:
-          path: ${{ github.workspace }}/obs-animation-filter
+          path: ${{ github.workspace }}/obs-animation
           submodules: 'recursive'
       - name: 'Checkout OBS-Studio'
         uses: actions/checkout@v2
@@ -218,8 +218,8 @@ jobs:
         run: |
           git checkout ${{ env.OBS_GIT_TAG }}
           git submodule update
-      - name: 'Get obs-animation-filter git info'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Get obs-animation git info'
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           git fetch --prune --unshallow
           GIT_HASH=$(git rev-parse --short HEAD)
@@ -309,8 +309,8 @@ jobs:
           sudo cp ./UI/obs-frontend-api/libobs-frontend-api.so /usr/lib
           sudo mkdir -p /usr/include/obs
           sudo cp ../UI/obs-frontend-api/obs-frontend-api.h /usr/include/obs/obs-frontend-api.h
-      - name: 'Configure obs-animation-filter'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Configure obs-animation'
+        working-directory: ${{ github.workspace }}/obs-animation
         shell: bash
         run: |
           mkdir ./build
@@ -320,8 +320,8 @@ jobs:
           else \
             cmake -DLIBOBS_INCLUDE_DIR=${{ github.workspace }}/obs-studio/libobs -DCMAKE_INSTALL_PREFIX=/usr -DUSE_UBUNTU_FIX=TRUE -DPLUGIN_TESTS=TRUE .. ; \
           fi
-      - name: 'Build obs-animation-filter'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Build obs-animation'
+        working-directory: ${{ github.workspace }}/obs-animation
         shell: bash
         run: |
           set -e
@@ -330,10 +330,10 @@ jobs:
       - name: 'Set PR Artifact Filename'
         shell: bash
         run: |
-          echo "LINUX_FILENAME=obs-animation-filter-${{ env.PACKAGE_VERSION }}-Ubuntu64.deb" >> $GITHUB_ENV
+          echo "LINUX_FILENAME=obs-animation-${{ env.PACKAGE_VERSION }}-Ubuntu64.deb" >> $GITHUB_ENV
       - name: 'Package ${{ env.LINUX_FILENAME }}'
         if: success()
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         shell: bash
         run: |
           if [ "${{ env.GIT_TAG }}" ] ; then \
@@ -343,7 +343,7 @@ jobs:
           fi
           cd ./build
           sudo checkinstall -y --type=debian --fstrans=no -nodoc \
-              --backup=no --deldoc=yes --install=no --pkgname=obs-animation-filter --pkgversion="$CHECKINSTALL_VERSION" \
+              --backup=no --deldoc=yes --install=no --pkgname=obs-animation --pkgversion="$CHECKINSTALL_VERSION" \
               --pkglicense="GPLv2.0" --maintainer="${{ github.event.pusher.email }}" --pkggroup="video" \
               --pkgsource="${{ github.event.repository.html_url }}" \
               --requires="obs-studio,libqt5network5,libqt5concurrent5,qt5-image-formats-plugins" \
@@ -355,20 +355,20 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: 'obs-animation-filter-${{ env.PACKAGE_VERSION }}-Ubuntu64'
-          path: '${{ github.workspace }}/obs-animation-filter/package/*.deb'
+          name: 'obs-animation-${{ env.PACKAGE_VERSION }}-Ubuntu64'
+          path: '${{ github.workspace }}/obs-animation/package/*.deb'
   macOS:
     name: 'macOS 64-bit'
     runs-on: [macos-latest]
     if: contains(github.event.head_commit.message, '[skip ci]') != true
     env:
-      MACOS_DEPS_VERSION: '2021-12-05'
-      MACOS_DEPS_CACHE_VERSION: '1' # Change whenever updating dependencies version, in order to force a cache reset
+      MACOS_DEPS_VERSION: '2022-01-01'
+      MACOS_DEPS_CACHE_VERSION: '2' # Change whenever updating dependencies version, in order to force a cache reset
     steps:
-      - name: 'Checkout obs-animation-filter'
+      - name: 'Checkout obs-animation'
         uses: actions/checkout@v2
         with:
-          path: ${{ github.workspace }}/obs-animation-filter
+          path: ${{ github.workspace }}/obs-animation
           submodules: 'recursive'
       - name: 'Checkout OBS-Studio'
         uses: actions/checkout@v2
@@ -402,9 +402,9 @@ jobs:
         run: |
           git checkout ${{ env.OBS_GIT_TAG }}
           git submodule update
-      - name: 'Get obs-animation-filter git info'
+      - name: 'Get obs-animation git info'
         shell: bash
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           git fetch --prune --unshallow
           GIT_HASH=$(git rev-parse --short HEAD)
@@ -473,8 +473,8 @@ jobs:
           set -e
           cd ./build
           make -j4 libobs obs-frontend-api
-      - name: 'Configure obs-animation-filter'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Configure obs-animation'
+        working-directory: ${{ github.workspace }}/obs-animation
         shell: bash
         run: |
           mkdir -p build
@@ -487,8 +487,8 @@ jobs:
           	-DOBS_FRONTEND_LIB="${{ github.workspace }}/obs-studio/build/UI/obs-frontend-api/libobs-frontend-api.dylib" \
           	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
           	-DCMAKE_INSTALL_PREFIX=/usr
-      - name: 'Build obs-animation-filter'
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+      - name: 'Build obs-animation'
+        working-directory: ${{ github.workspace }}/obs-animation
         shell: bash
         run: |
           set -e
@@ -496,7 +496,7 @@ jobs:
           make -j4
       - name: 'Sign plugin binary'
         shell: bash
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           install_name_tool \
           	-change /tmp/obsdeps/lib/QtWidgets.framework/Versions/5/QtWidgets \
@@ -509,23 +509,23 @@ jobs:
           		@executable_path/../Frameworks/QtNetwork.framework/Versions/5/QtNetwork \
           	-change /tmp/obsdeps/lib/QtSvg.framework/Versions/5/QtSvg \
           		@executable_path/../Frameworks/QtSvg.framework/Versions/5/QtSvg \
-          	./build/obs-animation-filter.so
-          codesign --sign "${{ secrets.APPLICATION_CERTIFICATE_IDENTITY }}" ./build/obs-animation-filter.so
+          	./build/obs-animation.so
+          codesign --sign "${{ secrets.APPLICATION_CERTIFICATE_IDENTITY }}" ./build/obs-animation.so
       - name: 'Set PR Artifact Filename'
         shell: bash
         run: |
-          echo "MACOS_FILENAME=obs-animation-filter-${{ env.PACKAGE_VERSION }}-macOS.pkg" >> $GITHUB_ENV
-          echo "MACOS_FILENAME_UNSIGNED=obs-animation-filter-${{ env.PACKAGE_VERSION }}-macOS-Unsigned.pkg" >> $GITHUB_ENV
+          echo "MACOS_FILENAME=obs-animation-${{ env.PACKAGE_VERSION }}-macOS.pkg" >> $GITHUB_ENV
+          echo "MACOS_FILENAME_UNSIGNED=obs-animation-${{ env.PACKAGE_VERSION }}-macOS-Unsigned.pkg" >> $GITHUB_ENV
       - name: 'Package ${{ env.MACOS_FILENAME_UNSIGNED }}'
         if: success()
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         shell: bash
         run: |
-          packagesbuild ./CI/macos/obs-animation-filter.pkgproj
-          mv ./release/obs-animation-filter.pkg ./release/${{ env.MACOS_FILENAME_UNSIGNED }}
+          packagesbuild ./CI/macos/obs-animation.pkgproj
+          mv ./release/obs-animation.pkg ./release/${{ env.MACOS_FILENAME_UNSIGNED }}
       - name: 'Sign plugin package'
         shell: bash
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           productsign \
             --sign "${{ secrets.INSTALLER_CERTIFICATE_IDENTITY }}" \
@@ -534,11 +534,11 @@ jobs:
           rm ./release/${{ env.MACOS_FILENAME_UNSIGNED }}
       - name: 'Notarize package'
         shell: bash
-        working-directory: ${{ github.workspace }}/obs-animation-filter
+        working-directory: ${{ github.workspace }}/obs-animation
         run: |
           zip -r ./release/${{ env.MACOS_FILENAME }}.zip ./release/${{ env.MACOS_FILENAME }}
           UPLOAD_RESULT=$(xcrun altool --notarize-app \
-            --primary-bundle-id "fr.palakis.obs-animation-filter" \
+            --primary-bundle-id "fr.palakis.obs-animation" \
             --username "${{ secrets.AC_USERNAME }}" \
             --password "${{ secrets.AC_PASSWORD }}" \
             --asc-provider "${{ secrets.AC_PROVIDER_SHORTNAME }}" \
@@ -565,5 +565,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: 'obs-animation-filter-${{ env.PACKAGE_VERSION }}-macOS'
-          path: '${{ github.workspace }}/obs-animation-filter/release/${{ env.MACOS_FILENAME }}'
+          name: 'obs-animation-${{ env.PACKAGE_VERSION }}-macOS'
+          path: '${{ github.workspace }}/obs-animation/release/${{ env.MACOS_FILENAME }}'

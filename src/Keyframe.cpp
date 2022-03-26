@@ -24,11 +24,11 @@ Keyframe::Keyframe(obs_data_t *data, Keyframe *last_keyframe, double start_times
 }
 
 Keyframe::Keyframe(double duration, double from, double to)
-    : duration(duration), from_double(from), to_double(to)
+    : from_double(from), to_double(to), duration(duration)
 {
 }
 
-Keyframe::Keyframe(double duration, long long from, long long to) : duration(duration), from_int(from), to_int(to)
+Keyframe::Keyframe(double duration, long long from, long long to) : from_int(from), to_int(to), duration(duration)
 {
 }
 

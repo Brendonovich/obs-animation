@@ -21,7 +21,12 @@ struct OBSSceneItem
     obs_sceneitem_t *val;
 
     inline operator obs_sceneitem_t *() const { return val; }
-    OBSSceneItem operator=(obs_sceneitem_t *ptr) { val = ptr; }
+    OBSSceneItem operator=(obs_sceneitem_t *ptr)
+    {
+        OBSSceneItem ret;
+        ret.val = ptr;
+        return ret;
+    }
 
     bool getDoubleProperty(const char *property, double *output);
     bool getIntProperty(const char *property, long long *output);

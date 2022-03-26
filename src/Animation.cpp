@@ -18,7 +18,7 @@ Animation::Animation(obs_data_t *data, AnimationTarget *target) : target(target)
     auto current_timestamp = obs_data_get_double(first_item, "timestamp");
     auto last_keyframe = this->createFirstKeyframe(first_item);
 
-    for (auto k = 1; k < keyframes_count; k++)
+    for (size_t k = 1; k < keyframes_count; k++)
     {
         last_keyframe = &this->keyframes.emplace_back(obs_data_array_item(keyframes, k), last_keyframe, current_timestamp, this->property_type);
         current_timestamp += last_keyframe->duration;
